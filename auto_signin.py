@@ -13,7 +13,14 @@ import datetime
 import os
 import requests
 import time
+import logging
 from win32com.client import Dispatch
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
+                    datefmt='%a, %d %b %Y %H:%M:%S',
+                    filename='signinLogs.log',
+                    filemode='a')
 
 
 class Abc:
@@ -23,22 +30,23 @@ class Abc:
         deadline = "08:30:00"
         nowtime = time.ctime()[-13:-5]
         nowday = time.ctime()[0:3]
+
         if nowday == "Sat" or nowday == "Sun":
-            print "Weekends."
+            logging.info("Running at %s", nowday)
             return
 
         if deadline < nowtime:
-            print "Late."
+            logging.info("QUIT. It's late.")
             return
 
+        logging.info("Start running for %s...", self.u.upper())
         ie = Dispatch('InternetExplorer.Application')
         ie.visible = 1
 
         ie.navigate("http://web.abc/portal/")
         while ie.ReadyState != 4:
             time.sleep(1)
-            print "sleep for mainpage..."
-        print "mainpage loaded"
+        logging.info("mainpage loaded")
 
         document = ie.Document
         document.getElementById("UserName").value = self.u
@@ -46,51 +54,49 @@ class Abc:
         document.getElementById("saveCal").click()
 
         # wait in case cookies not loaded
-        time.sleep(1)
+        time.sleep(3)
 
         ie.navigate('http://kfzxsoi.zh.abc/attendance/userinfo.nsf/xpIndex.xsp')
         while ie.ReadyState != 4:
             time.sleep(1)
-            print "sleep for xpIndex..."
-        print "xpIndex loaded"
+        logging.info("xpIndex loaded")
 
         ie.navigate('http://kfzxsoi.zh.abc/attendance/userinfo.nsf/xpSignLogsOfMy.xsp')
         while ie.ReadyState != 4:
             time.sleep(1)
-            print "sleep for xpSignLogs..."
-        print "xpSignLogs loaded"
+        logging.info("xpSignLogs loaded")
 
         try:
             document.getElementById("view:_id1:btnSignIN").click()
         except:
-            print "Cannot find the sign in btn, restart in 10 sec..."
-            time.sleep(10)
-            self.signin()
+            logging.error("btn sign-in not found...")
+            self.sms("Sign in FAILED! btn sign-in not found...")
+            return
 
         signinname = document.getElementById('view:_id1:repeat1:0:cfName').innerHtml
         signindate = document.getElementById('view:_id1:repeat1:0:cfDate').innerHtml
         signintime = document.getElementById('view:_id1:repeat1:0:cfTime').innerHtml
 
-        smscontent = ""
         today = datetime.date.today()
         if signindate == str(today):
             if signintime < deadline:
-                smscontent = "%s %s Success. %s" % (signinname, signindate, signintime)
+                print "---------TODAY: %s----------- \n------------SIGNINDATE: %s --------------" % (signindate, today)
+                smscontent = "%s %s Success.%s" % (signinname, signindate, signintime)
 
             else:
-                smscontent = "Failed. Signed in after deadline."
+                smscontent = "Failed. It's late."
+
+            logging.info("Signed in SUCCESS.")
+            self.sms(smscontent)
+            self.killie()
         else:
-            print "Sign in FAILED! Restart in 10 sec"
+            logging.info("Oh, you son of a biscuit.")
+            logging.error("Failed. Date ERROR. Restart in 10 sec...")
             self.killie()
             time.sleep(10)
             self.signin()
 
-        print smscontent
-        self.sms(smscontent)
-        self.killie()
-
     def sms(self, content):
-        url_sms = "http://itable.abc/iTable/msg/toSendSmsPage.action?appBusinessId=duanxin"
         headers = {
             'Referer': 'http://itable.abc/iTable/homepage/HomePageAction_loadHomePageSync.action',
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -99,12 +105,11 @@ class Abc:
 
         payload = {
             'RegisterName': 'usr',
-            'Token': 'pwd'
+            'Token': 'pwd',
+            'AuthenticationType': '0'
         }
-        mainUrl = "http://itable.abc/iTable/login/LoginAction_login0.action"
-        signin = self.s.post(mainUrl, data=payload, headers={'Referer': 'http://web.abc/portal/'})
-
-        r = self.s.get(url_sms)
+        mainurl = "http://itable.abc/iTable/login/LoginAction_login0.action"
+        self.s.post(mainurl, data=payload, headers={'Referer': 'http://web.abc/portal/'})
 
         smsdata = {
             'msgVO.toMobile': '[{"name":"%s","mobile":"%s","cardId":" "}]' % (self.t, self.t),
@@ -112,17 +117,17 @@ class Abc:
         }
         rr = self.s.post('http://itable.abc/iTable/msg/insertMessageSend.action', data=smsdata, headers=headers)
         if 'success' in rr.text:
-            print "Msg sent: %s" % content
+            logging.info("Message sent(%s): %s", self.u, content)
 
-    def killie(self):
-
+    @staticmethod
+    def killie():
         time.sleep(1)
-        ret = os.system('tasklist | find "iexplore.exe"')  # if exist, return 0
+        ret = os.system('tasklist | find "iexplore.exe"')  # if exist iexplore, return 0
         if not ret:
             os.system('taskkill /f /im iexplore.exe')
+        logging.info("IE killed.")
 
     def __init__(self, u, p, t):
-
         self.u = u
         self.p = p
         self.t = t
@@ -132,8 +137,8 @@ person_tuple = [
     'usr&pwd&tel',
 ]
 
+
 for person in person_tuple:
     u, p, t = person.split("&")
-    print u, p, t
     Abc(u, p, t)
     time.sleep(10)
