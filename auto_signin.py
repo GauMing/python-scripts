@@ -80,9 +80,7 @@ class Abc:
         today = datetime.date.today()
         if signindate == str(today):
             if signintime < deadline:
-                print "---------TODAY: %s----------- \n------------SIGNINDATE: %s --------------" % (signindate, today)
                 smscontent = "%s %s Success.%s" % (signinname, signindate, signintime)
-
             else:
                 smscontent = "Failed. It's late."
 
