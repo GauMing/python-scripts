@@ -3,10 +3,8 @@
 
 
 """
-@Script name:       auto_signin.py
-@Author:            Kohaku
-@Created at:        2016/3/12 13:42
-@Description:       The script will sign in on wedkdays and then send messages to respective phones.
+@ Author:            Kohaku
+@ Description:       The script will sign in on wedkdays and then send messages to respective phones.
 """
 
 import datetime
