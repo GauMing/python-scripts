@@ -3,10 +3,8 @@
 
 
 """
-@Script name:       sosignin.py
-@Author:            Kohaku
-@Created at:        2016/3/17 16:21
-@Description:       The script will sign in stackoverflow and log.
+@ Author:            Kohaku
+@ Description:       The script will sign in stackoverflow and log.
 """
 
 import requests
