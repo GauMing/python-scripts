@@ -13,6 +13,7 @@ import requests
 import time
 import logging
 from win32com.client import Dispatch
+import xml.etree.ElementTree as ET
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
@@ -129,12 +130,12 @@ class Abc:
         self.t = t
         self.signin()
 
-person_tuple = [
-    'usr&pwd&tel',
-]
-
-
-for person in person_tuple:
-    u, p, t = person.split("&")
+    
+tree = ET.parse('config.xml')
+root = tree.getroot()
+for person in root.findall('person'):
+    name = person.find('name').text
+    pwd = person.find('pwd').text
+    tel = person.find('tel').text
     Abc(u, p, t)
     time.sleep(10)
