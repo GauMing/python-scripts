@@ -36,7 +36,7 @@ class stackoverflow(object):
         else:
             ret = "Fail"
 
-        filepath = 'soSigninLog.log'
+        filepath = './soSigninLog.log'
         with open(filepath, 'a') as f:
             f.write(time.ctime() + ' ' * 10 + ret + '\n')
 
