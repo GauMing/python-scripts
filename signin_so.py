@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 
 
-"""
-@ Author:            Kohaku
-@ Description:       The script will sign in stackoverflow and log.
-"""
+'''
+The script will sign in stackoverflow and log.
+'''
 
 import requests
 import time
