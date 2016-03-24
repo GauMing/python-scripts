@@ -14,7 +14,7 @@ with open('./data.txt', 'r') as f:
 
 reg = re.compile(r'([\w\'-]+)')
 dic = {}
-for word in word.findall(data):
+for word in reg.findall(data):
     if word not in dic:
         dic[word] = 1
     else:
