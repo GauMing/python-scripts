@@ -12,7 +12,7 @@ import re
 with open('./data.txt', 'r') as f:
     data = f.read()
 
-word = re.compile(r'([\w\'-]+)')
+reg = re.compile(r'([\w\'-]+)')
 dic = {}
 for word in word.findall(data):
     if word not in dic:
