@@ -54,6 +54,14 @@ class Abc:
 
         # wait in case cookies not loaded
         time.sleep(3)
+        
+        
+        try:
+          document.getElementById('something').innerHtml
+        except AttributeError:
+          logging.error('Wrong username or password!')
+          self.killie()
+          return
 
         ie.navigate('http://kfzxsoi.zh.abc/attendance/userinfo.nsf/xpIndex.xsp')
         while ie.ReadyState != 4:

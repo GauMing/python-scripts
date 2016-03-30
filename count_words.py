@@ -9,7 +9,7 @@ count words in data.txt, return words and their occurrence;
 
 import re
 
-with open('./data.txt', 'r') as f:
+with open('./data_for_count.txt', 'r') as f:
     data = f.read()
 
 reg = re.compile(r'([\w\'-]+)')
