@@ -4,7 +4,7 @@
 __author__ = 'Kohaku'
 
 '''
-
+generate an image mixed with several small images after formatted, hollow out a heart in the center
 '''
 
 import PIL.Image as Image
@@ -46,13 +46,15 @@ def concatPics(dir):
             fromImage = Image.open(pic)
             toImage.paste(fromImage, (x * cube_size, y * cube_size))
             index += 1
-    theHeart = [(8,2), (9,2), (11,2), (12,2), (7,3), (8,3), (9,3), (10,3), (11,3), (12,3), (13,3), (7,4), (8,4),
-                (9,4), (10,4), (11,4), (12,4), (13,4), (8,5), (9,5), (10,5), (11,5), (12,5), (9,6), (10,6), (11,6),
-                (10,6), (10, 7)]
+    theHeart = [(8, 2), (9, 2), (11, 2), (12, 2), (7, 3), (8, 3), (9, 3), (10, 3), (11, 3), (12, 3), (13, 3), (7, 4),
+                (8, 4),
+                (9, 4), (10, 4), (11, 4), (12, 4), (13, 4), (8, 5), (9, 5), (10, 5), (11, 5), (12, 5), (9, 6), (10, 6),
+                (11, 6),
+                (10, 6), (10, 7)]
     for point in theHeart:
         blankImage = Image.open(dir + 'blank.jpg')
         toImage.paste(blankImage, (point[0] * cube_size, point[1] * cube_size))
-    toImage.save('./1.jpg')
+    toImage.save('./result.jpg')
 
 
 dir = './img/'
