@@ -42,17 +42,17 @@ def isUpdata():
 
 
 def send_mail(content):
-    sender = 'gmkohaku@163.com'
-    receiver = '490264427@qq.com'
+    sender = ''
+    receiver = ''
     subject = '%s Python自动发送' % content
     smtpserver = 'smtp.163.com'
-    username = 'gmkohaku'
-    password = 'hello123'
+    username = ''
+    password = ''
 
     msg = MIMEText(content, 'plain', 'utf-8')
     msg['Subject'] = Header(subject, 'utf-8')
-    msg['From'] = 'Kohaku<gmkohaku@163.com>'
-    msg['To'] = "490264427@qq.com"
+    msg['From'] = ''
+    msg['To'] = ""
     smtp = smtplib.SMTP()
     smtp.connect('smtp.163.com')
     smtp.login(username, password)
