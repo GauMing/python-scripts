@@ -38,3 +38,5 @@ for filename in get_files(list_file):
         pass
 
 raw_input("Finished")
+
+
